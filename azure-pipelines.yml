@@ -5,11 +5,43 @@
 
 trigger:
 - main
+- '*'
 
 pool:
   name : Demo
 
 steps:
+  step: 
+  - task: Npm@1
+    inputs:
+      command: 'install'
+      workingDir: 'ClientApp'
+  - task: Npm@1
+    inputs:
+      command: 'ci'
+      workingDir: 'ClientApp'
+
+  - task: DotNetCoreCLI@2
+    inputs:
+          command: 'publish'
+          publishWebProjects: true
+          arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+          zipAfterPublish: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'
+
+          
+
+          
+
+
+  
+ 
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
